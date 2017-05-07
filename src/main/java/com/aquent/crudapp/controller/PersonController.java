@@ -34,7 +34,7 @@ public class PersonController {
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public ModelAndView list() {
         ModelAndView mav = new ModelAndView("person/list");
-        mav.addObject("persons", personService.listPeople());
+        mav.addObject("persons", personService.listEntities());
         return mav;
     }
 
@@ -61,9 +61,9 @@ public class PersonController {
      */
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public ModelAndView create(Person person) {
-        List<String> errors = personService.validatePerson(person);
+        List<String> errors = personService.validateEntity(person);
         if (errors.isEmpty()) {
-            personService.createPerson(person);
+            personService.createEntity(person);
             return new ModelAndView("redirect:/person/list");
         } else {
             ModelAndView mav = new ModelAndView("person/create");
@@ -71,6 +71,19 @@ public class PersonController {
             mav.addObject("errors", errors);
             return mav;
         }
+    }
+    
+    /**
+     * Add client to person
+     *
+     * @param person populated form bean for the person
+     * @return redirect, or create view with errors
+     */
+    @RequestMapping(value = "client/add", method = RequestMethod.POST)
+    public ModelAndView addClient(Person person) {
+        ModelAndView mav = new ModelAndView("person/list");
+        mav.addObject("person", person);
+        return mav;
     }
 
     /**
@@ -82,7 +95,7 @@ public class PersonController {
     @RequestMapping(value = "edit/{personId}", method = RequestMethod.GET)
     public ModelAndView edit(@PathVariable Integer personId) {
         ModelAndView mav = new ModelAndView("person/edit");
-        mav.addObject("person", personService.readPerson(personId));
+        mav.addObject("person", personService.readEntity(personId));
         mav.addObject("errors", new ArrayList<String>());
         return mav;
     }
@@ -97,9 +110,9 @@ public class PersonController {
      */
     @RequestMapping(value = "edit", method = RequestMethod.POST)
     public ModelAndView edit(Person person) {
-        List<String> errors = personService.validatePerson(person);
+        List<String> errors = personService.validateEntity(person);
         if (errors.isEmpty()) {
-            personService.updatePerson(person);
+            personService.updateEntity(person);
             return new ModelAndView("redirect:/person/list");
         } else {
             ModelAndView mav = new ModelAndView("person/edit");
@@ -118,7 +131,7 @@ public class PersonController {
     @RequestMapping(value = "delete/{personId}", method = RequestMethod.GET)
     public ModelAndView delete(@PathVariable Integer personId) {
         ModelAndView mav = new ModelAndView("person/delete");
-        mav.addObject("person", personService.readPerson(personId));
+        mav.addObject("person", personService.readEntity(personId));
         return mav;
     }
 
@@ -132,7 +145,7 @@ public class PersonController {
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     public String delete(@RequestParam String command, @RequestParam Integer personId) {
         if (COMMAND_DELETE.equals(command)) {
-            personService.deletePerson(personId);
+            personService.deleteEntity(personId);
         }
         return "redirect:/person/list";
     }

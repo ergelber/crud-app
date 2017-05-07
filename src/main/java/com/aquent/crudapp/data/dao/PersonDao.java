@@ -4,7 +4,7 @@ import com.aquent.crudapp.domain.Person;
 import java.util.List;
 
 /**
- * Operations on the "person" table.
+ * Operations on the "person and client" table.
  */
 public interface PersonDao {
 

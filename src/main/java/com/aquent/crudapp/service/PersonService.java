@@ -6,51 +6,55 @@ import com.aquent.crudapp.domain.Person;
 
 /**
  * Person operations.
+ * @param <Person>
  */
 public interface PersonService {
 
     /**
-     * Retrieves all of the person records.
+     * Retrieves all of the person/client records.
      *
-     * @return list of person records
+     * @return list of person/client records
      */
-    List<Person> listPeople();
+    List<Person> listEntities();
 
     /**
-     * Creates a new person record.
+     * Creates a new person/client record.
+     * @param <Person>
      *
-     * @param person the values to save
-     * @return the new person ID
+     * @param person/client the values to save
+     * @return the new person/client ID
      */
-    Integer createPerson(Person person);
+    Integer createEntity(Person entity);
 
     /**
      * Retrieves a person record by ID.
      *
      * @param id the person ID
-     * @return the person record
+     * @return the person/client record
      */
-    Person readPerson(Integer id);
+     Object readEntity(Integer id);
 
     /**
      * Updates an existing person record.
+     * @param <Person>
      *
-     * @param person the new values to save
+     * @param person/client the new values to save
      */
-    void updatePerson(Person person);
+    void updateEntity(Person entity);
 
     /**
-     * Deletes a person record by ID.
+     * Deletes a person/client record by ID.
      *
-     * @param id the person ID
+     * @param id the person/client ID
      */
-    void deletePerson(Integer id);
+    void deleteEntity(Integer id);
 
     /**
-     * Validates populated person data.
+     * Validates populated person/client data.
+     * @param <Person>
      *
-     * @param person the values to validate
+     * @param person/client the values to validate
      * @return list of error messages
      */
-    List<String> validatePerson(Person person);
+    List<String> validateEntity(Person entity);
 }

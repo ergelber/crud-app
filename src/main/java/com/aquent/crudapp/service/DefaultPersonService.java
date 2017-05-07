@@ -32,36 +32,36 @@ public class DefaultPersonService implements PersonService {
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public List<Person> listPeople() {
+    public List<Person> listEntities() {
         return personDao.listPeople();
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Person readPerson(Integer id) {
+    public Person readEntity(Integer id) {
         return personDao.readPerson(id);
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
-    public Integer createPerson(Person person) {
+    public Integer createEntity(Person person) {
         return personDao.createPerson(person);
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
-    public void updatePerson(Person person) {
+    public void updateEntity(Person person) {
         personDao.updatePerson(person);
     }
 
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
-    public void deletePerson(Integer id) {
+    public void deleteEntity(Integer id) {
         personDao.deletePerson(id);
     }
 
     @Override
-    public List<String> validatePerson(Person person) {
+    public List<String> validateEntity(Person person) {
         Set<ConstraintViolation<Person>> violations = validator.validate(person);
         List<String> errors = new ArrayList<String>(violations.size());
         for (ConstraintViolation<Person> violation : violations) {

@@ -37,6 +37,8 @@ public class Person {
     @NotNull
     @Size(min = 5, max = 5, message = "Zip code is required with length 5")
     private String zipCode;
+    
+    private Integer client;
 
     public Integer getPersonId() {
         return personId;
@@ -101,4 +103,12 @@ public class Person {
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
+
+    public int getClient() {
+    	return client;
+    }
+    
+	public void setClient(int client) {
+		this.client = client;
+	}
 }

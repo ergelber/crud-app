@@ -50,5 +50,13 @@
             <br/>
             <input type="submit" name="Submit" value="Submit"/>
         </form>
+        
+        <form action="${pageContext.request.contextPath}/person/clients/add" method="POST">
+        	 <h2>Associated Client:</h2>
+            
+            <c:forEach items="${client}" var="client">
+                <input type="checkbox" name="id" value=${client.client_id}/>${client.company}
+            </c:forEach>
+        </form>
     </body>
 </html>
