@@ -14,9 +14,15 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Person Listing</title>
+        <link rel="stylesheet" href="<c:url value="/resources/css/bootstrap.css" />"/>
     </head>
     <body>
         <h1>Person Listing</h1>     
+        <div class="row">
+  <div class="col-sm-4">.col-sm-4</div>
+  <div class="col-sm-4">.col-sm-4</div>
+  <div class="col-sm-4">.col-sm-4</div>
+</div>
         <p><a href="${pageContext.request.contextPath}/person/create">Create New Person</a></p>
         <c:choose>
             <c:when test="${fn:length(persons) gt 0}">
