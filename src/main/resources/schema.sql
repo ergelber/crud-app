@@ -3,7 +3,7 @@ CREATE TABLE client (
     company varchar(50) NOT NULL,
     website varchar(50) NOT NULL,
     phone varchar(50) NOT NULL,
-    mailing varchar(50) NOT NULL
+    mailing varchar(50) NOT NULL,
 );
 
 CREATE TABLE person (
@@ -16,7 +16,7 @@ CREATE TABLE person (
     state varchar(2) NOT NULL,
     zip_code varchar(5) NOT NULL,
     client_id integer,
-    CONSTRAINT fk_client_id FOREIGN KEY (client_id) REFERENCES client (client_id)
+    CONSTRAINT fk_client FOREIGN KEY (client_id) references client (client_id)
 );
 
 CREATE TABLE client_persons (

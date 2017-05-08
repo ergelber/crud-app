@@ -44,12 +44,16 @@
                     </thead>
                     <tbody>
                         <c:forEach items="${persons}" var="person">
-                        	<c:forEach items="${person.companies}" var="company">
+                        	
 	                            <tr>
 	                                <td>${person.firstName}</td>
 	                                <td>${person.lastName}</td>
 	                                <td>${person.emailAddress}</td>
-	                                <td>${company}</td>
+	                                <td>
+		                                <c:forEach items="${person.companies}" var="company">
+		                                	${company},
+		                                </c:forEach>
+	                                </td>
 	                                <td>
 	                                    <a href="${pageContext.request.contextPath}/person/edit/${person.personId}">Edit Person</a>
 	                                </td>
@@ -57,7 +61,7 @@
 	                                    <a href="${pageContext.request.contextPath}/person/delete/${person.personId}">Delete Person</a>
 	                                </td>
 	                            </tr>
-	                        </c:forEach>
+	                        
                         </c:forEach>
                     </tbody>
                 </table>

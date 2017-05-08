@@ -78,6 +78,7 @@ public class PersonJdbcDao implements PersonDao {
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void deletePerson(Integer personId) {
+    	// have to delete from the client_persons table first
         namedParameterJdbcTemplate.update(SQL_DELETE_CLIENT_PERSON, Collections.singletonMap("personId", personId));
         namedParameterJdbcTemplate.update(SQL_DELETE_PERSON, Collections.singletonMap("personId", personId));
     }
@@ -86,6 +87,8 @@ public class PersonJdbcDao implements PersonDao {
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void updatePerson(Person person) {
     	if(person.getClientIds() != null && person.getClientIds().size() > 0) {
+    		// add the person_id and client_id combinations 
+    		// one by one to the client_persons table
         	for(int i : person.getClientIds()) {
         		MapSqlParameterSource params = new MapSqlParameterSource();
         		params.addValue("client_id", i, Types.INTEGER);
@@ -106,6 +109,8 @@ public class PersonJdbcDao implements PersonDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(SQL_CREATE_PERSON, new BeanPropertySqlParameterSource(person), keyHolder);
         if(person.getClientIds() != null && person.getClientIds().size() > 0) {
+        	// add the person_id and client_id combinations 
+    		// one by one to the client_persons table
         	for(int i : person.getClientIds()) {
         		MapSqlParameterSource params = new MapSqlParameterSource();
         		params.addValue("client_id", i, Types.INTEGER);

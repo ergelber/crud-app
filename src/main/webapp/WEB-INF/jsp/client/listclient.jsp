@@ -30,6 +30,7 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
+                        	<th>ID</th>
                             <th>Company</th>
                             <th>Website</th>
                             <th>Phone</th>
@@ -41,13 +42,18 @@
                     </thead>
                     <tbody>
                         <c:forEach items="${clients}" var="client">
-                        	<c:forEach items="${client.personNames}" var="name">
+                        	
 	                            <tr>
+	                            	<td>${client.clientId}</td>
 	                                <td>${client.company}</td>
 	                                <td>${client.website}</td>
 	                                <td>${client.phone}</td>
 	                                <td>${client.mailing}</td>
-	                                <td>${name}</td>
+	                                <td>
+	                                <c:forEach items="${client.personNames}" var="name">
+	                                	${name},
+	                                </c:forEach>
+	                                </td>
 	                                <td>
 	                                    <a href="${pageContext.request.contextPath}/client/edit/${client.clientId}">Edit client</a>
 	                                </td>
@@ -55,7 +61,7 @@
 	                                    <a href="${pageContext.request.contextPath}/client/delete/${client.clientId}">Delete client</a>
 	                                </td>
 	                            </tr>
-	                         </c:forEach>
+	                         
                         </c:forEach>
                     </tbody>
                 </table>

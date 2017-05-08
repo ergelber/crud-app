@@ -48,7 +48,9 @@ public class ClientJdbcDao implements ClientDao {
                                                   + " VALUES (:company, :website, :phone, :mailing)";
     private static final String SQL_CREATE_CLIENT_PERSON = "INSERT INTO client_persons (client_id, person_id)"
             									  + " VALUES (:client_id, :person_id)";
-    
+    private static final String SQL_UPDATE_CLIENT_PERSON = "UPDATE client_persons SET (client_id, person_id)"
+			  									  + " = (:client_id, :person_id) WHERE client_id = :client_id AND person_id = :person_id";
+
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -59,7 +61,7 @@ public class ClientJdbcDao implements ClientDao {
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public List<Client> listClients() {
-        return namedParameterJdbcTemplate.getJdbcOperations().query(SQL_LIST_CLIENTS, new ClientRowMapper());
+    	return namedParameterJdbcTemplate.getJdbcOperations().query(SQL_LIST_CLIENTS, new ClientRowMapper());
     }
 
     @Override
@@ -71,6 +73,7 @@ public class ClientJdbcDao implements ClientDao {
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void deleteClient(Integer clientId) {
+    	// have to delete from the client_persons table first
         namedParameterJdbcTemplate.update(SQL_DELETE_CLIENT_PERSON, Collections.singletonMap("clientId", clientId));
         namedParameterJdbcTemplate.update(SQL_DELETE_CLIENT, Collections.singletonMap("clientId", clientId));
     }
@@ -79,12 +82,16 @@ public class ClientJdbcDao implements ClientDao {
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void updateClient(Client client) {
     	if(client.getPersonIds() != null && client.getPersonIds().size() > 0) {
+    		// add the person_id and client_id combinations 
+    		// one by one to the client_persons table
         	for(int i : client.getPersonIds()) {
         		MapSqlParameterSource params = new MapSqlParameterSource();
         		params.addValue("client_id", client.getClientId(), Types.INTEGER);
         		params.addValue("person_id", i, Types.INTEGER);
         		try {
-        			namedParameterJdbcTemplate.update(SQL_CREATE_CLIENT_PERSON, params);
+        			if (namedParameterJdbcTemplate.update(SQL_UPDATE_CLIENT_PERSON, params) == 0) {
+        				namedParameterJdbcTemplate.update(SQL_CREATE_CLIENT_PERSON, params);
+        			}
         		} catch (DuplicateKeyException e) {
         			System.out.println("*** Client " + client.getClientId() + " already has Person " + i + " associated ****");
         		}
@@ -100,6 +107,8 @@ public class ClientJdbcDao implements ClientDao {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(SQL_CREATE_CLIENT, new BeanPropertySqlParameterSource(client), keyHolder);
         if(client.getPersonIds() != null && client.getPersonIds().size() > 0) {
+        	// add the person_id and client_id combinations 
+    		// one by one to the client_persons table
         	for(int i : client.getPersonIds()) {
         		MapSqlParameterSource params = new MapSqlParameterSource();
         		params.addValue("person_id", i, Types.INTEGER);
@@ -133,7 +142,7 @@ public class ClientJdbcDao implements ClientDao {
         	}
         	
         	client.getPersonIds().add(rs.getInt("person_id"));
-            client.getPersonNames().add(rs.getString("name"));
+        	client.getPersonNames().add(rs.getString("name"));
             return client;
         }
     }
