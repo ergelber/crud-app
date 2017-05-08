@@ -26,7 +26,7 @@ import com.aquent.crudapp.domain.Person;
  */
 public class ClientJdbcDao implements ClientDao {
 
-    private static final String SQL_LIST_CLIENTS = "SELECT DISTINCT c.*, p.first_name, p.last_name as name FROM client c "
+    private static final String SQL_LIST_CLIENTS = "SELECT DISTINCT c.*, p.person_id as person_id, p.first_name, p.last_name as name FROM client c "
 									    		+ "INNER JOIN client_persons cp "
 									    		+ "on c.client_id = cp.client_id "
 									    		+ "INNER JOIN person p "
@@ -82,7 +82,7 @@ public class ClientJdbcDao implements ClientDao {
     public Integer createClient(Client client) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(SQL_CREATE_CLIENT, new BeanPropertySqlParameterSource(client), keyHolder);
-        if(client.getPersonIds().size() > 0) {
+        if(client.getPersonIds() != null && client.getPersonIds().size() > 0) {
         	for(int i : client.getPersonIds()) {
         		MapSqlParameterSource params = new MapSqlParameterSource();
         		params.addValue("person_id", i, Types.INTEGER);

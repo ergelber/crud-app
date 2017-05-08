@@ -83,7 +83,7 @@ public class PersonJdbcDao implements PersonDao {
     public Integer createPerson(Person person) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         namedParameterJdbcTemplate.update(SQL_CREATE_PERSON, new BeanPropertySqlParameterSource(person), keyHolder);
-        if(person.getClientIds().size() > 0) {
+        if(person.getClientIds() != null && person.getClientIds().size() > 0) {
         	for(int i : person.getClientIds()) {
         		MapSqlParameterSource params = new MapSqlParameterSource();
         		params.addValue("client_id", i, Types.INTEGER);
