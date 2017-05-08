@@ -2,6 +2,7 @@ package com.aquent.crudapp.data.dao.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -37,8 +39,8 @@ public class PersonJdbcDao implements PersonDao {
                                                   + " WHERE person_id = :personId";
     private static final String SQL_CREATE_PERSON = "INSERT INTO person (first_name, last_name, email_address, street_address, city, state, zip_code)"
                                                   + " VALUES (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode)";
-    private static final String SQL_CREATE_CLIENT_PERSON = "INSERT INTO client_persons(person_id, client_id "
-    		+ "VALUES (:person_id, :client_id)";
+    private static final String SQL_CREATE_CLIENT_PERSON = "INSERT INTO client_persons (person_id, client_id)"
+            + " VALUES (:person_id, :client_id)";
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -80,9 +82,15 @@ public class PersonJdbcDao implements PersonDao {
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public Integer createPerson(Person person) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        //Map<String, Integer>[] clientPersonParams = Map<String, Integer>[person.getClientIds().size()];
-        // loop over person clients ids and create a new map with person id and client id from array interating over, with array of maps with one for each client id
         namedParameterJdbcTemplate.update(SQL_CREATE_PERSON, new BeanPropertySqlParameterSource(person), keyHolder);
+        if(person.getClientIds().size() > 0) {
+        	for(int i : person.getClientIds()) {
+        		MapSqlParameterSource params = new MapSqlParameterSource();
+        		params.addValue("client_id", i, Types.INTEGER);
+        		params.addValue("person_id", keyHolder.getKey().intValue(), Types.INTEGER);
+        		namedParameterJdbcTemplate.update(SQL_CREATE_CLIENT_PERSON, params);
+        	}
+        }
         return keyHolder.getKey().intValue();
     }
 

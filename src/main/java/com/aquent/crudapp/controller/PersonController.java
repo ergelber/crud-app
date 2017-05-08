@@ -75,7 +75,6 @@ public class PersonController {
             return mav;
         }
     }
-    
    
 
     /**
@@ -84,12 +83,12 @@ public class PersonController {
      * @param person populated form bean for the person
      * @return redirect, or create view with errors
      */
-    @RequestMapping(value = "client/add", method = RequestMethod.POST)
-    public ModelAndView addClient(Person person) {
-        ModelAndView mav = new ModelAndView("person/list");
-        mav.addObject("person", person);
-        return mav;
-    }
+//    @RequestMapping(value = "client/add/{personId}", method = RequestMethod.GET)
+//    public ModelAndView addClient(Person person) {
+//        ModelAndView mav = new ModelAndView("person/client/add");
+//        mav.addObject("person", person);
+//        return mav;
+//    }
 
     /**
      * Renders an edit form for an existing person record.
