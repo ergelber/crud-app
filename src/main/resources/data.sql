@@ -1,17 +1,14 @@
 INSERT INTO client (
-	client_id,
     company,
     website,
     phone,
     mailing
 ) VALUES (
-	1,
     'Cool New Company',
     'coolestcompany.com',
     '123456789',
     '123 Any St. Asheville NC 28801'
 ), (
-	2,
     'Not Cool New Company',
     'notcoolcompany.com',
     '123456789',
@@ -25,8 +22,7 @@ INSERT INTO person (
     street_address,
     city,
     state,
-    zip_code,
-    client_id
+    zip_code
 ) VALUES (
     'John',
     'Smith',
@@ -34,8 +30,7 @@ INSERT INTO person (
     '123 Any St.',
     'Asheville',
     'NC',
-    '28801',
-    1
+    '28801'
 ), (
     'Jane',
     'Smith',
@@ -43,8 +38,13 @@ INSERT INTO person (
     '123 Any St.',
     'Asheville',
     'NC',
-    '28801',
-    1
+    '28801'
 );
+
+INSERT INTO client_persons ( 
+	person_id, 
+	client_id
+) VALUES ( 0, 0 ), ( 0, 1 ), ( 1, 1 ), ( 1, 0 )
+
 
 

@@ -2,8 +2,11 @@ package com.aquent.crudapp.data.dao.jdbc;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -21,16 +24,21 @@ import com.aquent.crudapp.domain.Person;
  */
 public class PersonJdbcDao implements PersonDao {
 
-    private static final String SQL_LIST_PEOPLE = "SELECT * FROM person ORDER BY first_name, last_name, person_id";
+    private static final String SQL_LIST_PEOPLE = "SELECT p.*, c.client_id as client_id, c.company as company FROM person p "
+    		+ "INNER JOIN client_persons cp "
+    		+ "on p.person_id = cp.person_id "
+    		+ "INNER JOIN client c "
+    		+ "on cp.client_id = c.client_id "
+    		+ "ORDER BY p.last_name";
     private static final String SQL_READ_PERSON = "SELECT * FROM person WHERE person_id = :personId";
     private static final String SQL_DELETE_PERSON = "DELETE FROM person WHERE person_id = :personId";
     private static final String SQL_UPDATE_PERSON = "UPDATE person SET (first_name, last_name, email_address, street_address, city, state, zip_code, client_id)"
                                                   + " = (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode, :client_id)"
                                                   + " WHERE person_id = :personId";
-    private static final String SQL_CREATE_PERSON = "INSERT INTO person (first_name, last_name, email_address, street_address, city, state, zip_code, client_id)"
-                                                  + " VALUES (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode, :client_id)";
-    
-    
+    private static final String SQL_CREATE_PERSON = "INSERT INTO person (first_name, last_name, email_address, street_address, city, state, zip_code)"
+                                                  + " VALUES (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode)";
+    private static final String SQL_CREATE_CLIENT_PERSON = "INSERT INTO client_persons(person_id, client_id "
+    		+ "VALUES (:person_id, :client_id)";
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -41,7 +49,13 @@ public class PersonJdbcDao implements PersonDao {
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public List<Person> listPeople() {
-        return namedParameterJdbcTemplate.getJdbcOperations().query(SQL_LIST_PEOPLE, new PersonRowMapper());
+    	PersonRowMapper mapper = new PersonRowMapper();
+        namedParameterJdbcTemplate.getJdbcOperations().query(SQL_LIST_PEOPLE, mapper);
+        List<Person> people = new ArrayList<Person>();
+        for(Person p : mapper.people.values()) {
+        	people.add(p);
+        }
+        return people;
     }
 
     @Override
@@ -66,6 +80,8 @@ public class PersonJdbcDao implements PersonDao {
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public Integer createPerson(Person person) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
+        //Map<String, Integer>[] clientPersonParams = Map<String, Integer>[person.getClientIds().size()];
+        // loop over person clients ids and create a new map with person id and client id from array interating over, with array of maps with one for each client id
         namedParameterJdbcTemplate.update(SQL_CREATE_PERSON, new BeanPropertySqlParameterSource(person), keyHolder);
         return keyHolder.getKey().intValue();
     }
@@ -73,21 +89,36 @@ public class PersonJdbcDao implements PersonDao {
     /**
      * Row mapper for person records.
      */
-    private static final class PersonRowMapper implements RowMapper<Person> {
-
+    private class PersonRowMapper implements RowMapper<Person> {
+    	
+    	public HashMap<Integer, Person> people = new HashMap<Integer, Person>();
+    	
         @Override
         public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
-            Person person = new Person();
-            person.setPersonId(rs.getInt("person_id"));
-            person.setFirstName(rs.getString("first_name"));
-            person.setLastName(rs.getString("last_name"));
-            person.setEmailAddress(rs.getString("email_address"));
-            person.setStreetAddress(rs.getString("street_address"));
-            person.setCity(rs.getString("city"));
-            person.setState(rs.getString("state"));
-            person.setZipCode(rs.getString("zip_code"));
-            person.setClient(rs.getInt("client_id"));
+        	Person person = people.get(rs.getInt("person_id"));
+        	
+        	if (person == null) {
+        		person = new Person();
+        		person.setPersonId(rs.getInt("person_id"));
+                person.setFirstName(rs.getString("first_name"));
+                person.setLastName(rs.getString("last_name"));
+                person.setEmailAddress(rs.getString("email_address"));
+                person.setStreetAddress(rs.getString("street_address"));
+                person.setCity(rs.getString("city"));
+                person.setState(rs.getString("state"));
+                person.setZipCode(rs.getString("zip_code"));
+                person.setClientIds(new ArrayList<Integer>());
+                person.setCompanies(new ArrayList<String>());
+                people.put(person.getPersonId(), person);
+        	}
+
+            person.getClientIds().add(rs.getInt("client_id"));
+            person.getCompanies().add(rs.getString("company"));
             return person;
         }
+        
+        
     }
+    
+    
 }

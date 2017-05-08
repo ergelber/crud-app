@@ -1,5 +1,7 @@
 package com.aquent.crudapp.domain;
 
+import java.util.ArrayList;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -38,7 +40,8 @@ public class Person {
     @Size(min = 5, max = 5, message = "Zip code is required with length 5")
     private String zipCode;
     
-    private Integer client;
+    private ArrayList<Integer> clientIds;
+    private ArrayList<String> companies;
 
     public Integer getPersonId() {
         return personId;
@@ -104,11 +107,20 @@ public class Person {
         this.zipCode = zipCode;
     }
 
-    public int getClient() {
-    	return client;
-    }
-    
-	public void setClient(int client) {
-		this.client = client;
+	public ArrayList<Integer> getClientIds() {
+		return clientIds;
 	}
+
+	public void setClientIds(ArrayList<Integer> clientIds) {
+		this.clientIds = clientIds;
+	}
+
+	public ArrayList<String> getCompanies() {
+		return companies;
+	}
+
+	public void setCompanies(ArrayList<String> companies) {
+		this.companies = companies;
+	}
+
 }

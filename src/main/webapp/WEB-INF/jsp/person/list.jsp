@@ -14,40 +14,50 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Person Listing</title>
-        <link rel="stylesheet" href="<c:url value="/resources/css/bootstrap.css" />"/>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     </head>
     <body>
-        <h1>Person Listing</h1>     
-        <div class="row">
-  <div class="col-sm-4">.col-sm-4</div>
-  <div class="col-sm-4">.col-sm-4</div>
-  <div class="col-sm-4">.col-sm-4</div>
-</div>
-        <p><a href="${pageContext.request.contextPath}/person/create">Create New Person</a></p>
+    	<div class="page-header">
+        	<h1>Person Listing</h1>     
+		</div>
+		
+		<button class="btn btn-default">
+			<a href="${pageContext.request.contextPath}/person/create">Create New Person</a>
+		</button>
+
         <c:choose>
             <c:when test="${fn:length(persons) gt 0}">
-                <table>
+                <table class="table table-bordered">
                     <thead>
                         <tr>
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Email Address</th>
                             <th>Client</th>
-                            <th>Actions</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
                         <c:forEach items="${persons}" var="person">
-                            <tr>
-                                <td>${person.firstName}</td>
-                                <td>${person.lastName}</td>
-                                <td>${person.emailAddress}</td>
-                                <td>${person.client}</td>
-                                <td>
-                                    <a href="${pageContext.request.contextPath}/person/edit/${person.personId}">Edit Person</a>
-                                    <a href="${pageContext.request.contextPath}/person/delete/${person.personId}">Delete Person</a>
-                                </td>
-                            </tr>
+                        	<c:forEach items="${person.companies}" var="company">
+	                            <tr>
+	                                <td>${person.firstName}</td>
+	                                <td>${person.lastName}</td>
+	                                <td>${person.emailAddress}</td>
+	                                <td>${company}</td>
+	                                <td>
+	                                    <a href="${pageContext.request.contextPath}/person/edit/${person.personId}">Edit Person</a>
+	                                </td>
+	                                <td>   
+	                                    <a href="${pageContext.request.contextPath}/person/delete/${person.personId}">Delete Person</a>
+	                                </td>
+	                            </tr>
+	                        </c:forEach>
                         </c:forEach>
                     </tbody>
                 </table>

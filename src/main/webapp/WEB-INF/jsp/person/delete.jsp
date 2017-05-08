@@ -12,14 +12,21 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <title>Delete Person</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     </head>
     <body>
         <h1>Delete Person</h1>
-        <p>You are about to delete the person ${person.firstName} ${person.lastName}:  Are you sure?</p>
-        <form action="${pageContext.request.contextPath}/person/delete" method="post">
-            <input type="hidden" name="personId" value="${person.personId}"/>
-            <input type="submit" name="command" value="Cancel"/>
-            <input type="submit" name="command" value="Delete"/>
-        </form>
+        <div class="alert alert-danger" role="alert">
+	        <p>You are about to delete the person ${person.firstName} ${person.lastName}:  Are you sure?</p>
+	        <form action="${pageContext.request.contextPath}/person/delete" method="post">
+	            <input type="hidden" name="personId" value="${person.personId}"/>
+	            <input type="submit" name="command" value="Cancel"/>
+	            <input type="submit" name="command" value="Delete"/>
+	        </form>
+	    </div>
     </body>
 </html>
