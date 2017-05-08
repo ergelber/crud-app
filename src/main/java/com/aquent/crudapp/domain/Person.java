@@ -37,7 +37,7 @@ public class Person {
     private String state;
 
     @NotNull
-    @Size(min = 5, max = 5, message = "Zip code is required with length 5")
+    @Size(min = 1, max = 50, message = "Zip code is required with length 5")
     private String zipCode;
     
     private ArrayList<Integer> clientIds;

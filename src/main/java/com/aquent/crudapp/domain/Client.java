@@ -1,5 +1,7 @@
 package com.aquent.crudapp.domain;
 
+import java.util.ArrayList;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -15,12 +17,15 @@ public class Client {
     private String website;
 
     @NotNull
-    @Size(min = 10, max = 50, message = "Phone is required with length of 10")
+    @Size(min = 1, max = 50, message = "Phone is required with length of 10")
     private String phone;
 
     @NotNull
     @Size(min = 1, max = 50, message = "Mailing address is required with maximum length of 50")
     private String mailing;
+    
+    private ArrayList<Integer> personIds;
+    private ArrayList<String> personNames;
 
 
 	public String getCompany() {
@@ -61,5 +66,21 @@ public class Client {
 
 	public void setClientId(Integer clientId) {
 		this.clientId = clientId;
+	}
+	
+	public ArrayList<Integer> getPersonIds() {
+		return personIds;
+	}
+
+	public void setPersonIds(ArrayList<Integer> personIds) {
+		this.personIds = personIds;
+	}
+
+	public ArrayList<String> getPersonNames() {
+		return personNames;
+	}
+
+	public void setPersonNames(ArrayList<String> names) {
+		this.personNames = names;
 	}
 }

@@ -27,20 +27,20 @@ import com.aquent.crudapp.domain.Person;
 public class PersonJdbcDao implements PersonDao {
 
     private static final String SQL_LIST_PEOPLE = "SELECT p.*, c.client_id as client_id, c.company as company FROM person p "
-    		+ "INNER JOIN client_persons cp "
-    		+ "on p.person_id = cp.person_id "
-    		+ "INNER JOIN client c "
-    		+ "on cp.client_id = c.client_id "
-    		+ "ORDER BY p.last_name";
+									    		+ "INNER JOIN client_persons cp "
+									    		+ "on p.person_id = cp.person_id "
+									    		+ "INNER JOIN client c "
+									    		+ "on cp.client_id = c.client_id "
+									    		+ "ORDER BY p.last_name";
     private static final String SQL_READ_PERSON = "SELECT * FROM person WHERE person_id = :personId";
     private static final String SQL_DELETE_PERSON = "DELETE FROM person WHERE person_id = :personId";
     private static final String SQL_UPDATE_PERSON = "UPDATE person SET (first_name, last_name, email_address, street_address, city, state, zip_code, client_id)"
-                                                  + " = (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode, :client_id)"
-                                                  + " WHERE person_id = :personId";
+												+ " = (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode, :client_id)"
+												+ " WHERE person_id = :personId";
     private static final String SQL_CREATE_PERSON = "INSERT INTO person (first_name, last_name, email_address, street_address, city, state, zip_code)"
-                                                  + " VALUES (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode)";
+                                                + " VALUES (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode)";
     private static final String SQL_CREATE_CLIENT_PERSON = "INSERT INTO client_persons (person_id, client_id)"
-            + " VALUES (:person_id, :client_id)";
+    											+ " VALUES (:person_id, :client_id)";
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 

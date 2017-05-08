@@ -14,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.aquent.crudapp.domain.Client;
 import com.aquent.crudapp.service.ClientService;
+import com.aquent.crudapp.service.PersonService;
 
 /**
  * Controller for handling basic Client management operations.
@@ -24,7 +25,8 @@ public class ClientController {
 
     public static final String COMMAND_DELETE = "Delete";
 
-    @Inject private ClientService ClientService;
+    @Inject private ClientService clientService;
+    @Inject private PersonService personService;
 
     /**
      * Renders the listing page.
@@ -34,7 +36,7 @@ public class ClientController {
     @RequestMapping(value = "list", method = RequestMethod.GET)
     public ModelAndView list() {
         ModelAndView mav = new ModelAndView("client/listclient");
-        mav.addObject("clients", ClientService.listEntities());
+        mav.addObject("clients", clientService.listEntities());
         return mav;
     }
 
@@ -47,6 +49,7 @@ public class ClientController {
     public ModelAndView create() {
         ModelAndView mav = new ModelAndView("client/createclient");
         mav.addObject("client", new Client());
+        mav.addObject("persons", personService.listEntities());
         mav.addObject("errors", new ArrayList<String>());
         return mav;
     }
@@ -56,18 +59,18 @@ public class ClientController {
      * On success, the user is redirected to the listing page.
      * On failure, the form is redisplayed with the validation errors.
      *
-     * @param Client populated form bean for the Client
+     * @param client populated form bean for the Client
      * @return redirect, or create view with errors
      */
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public ModelAndView create(Client Client) {
-        List<String> errors = ClientService.validateEntity(Client);
+    public ModelAndView create(Client client) {
+        List<String> errors = clientService.validateEntity(client);
         if (errors.isEmpty()) {
-            ClientService.createEntity(Client);
+            clientService.createEntity(client);
             return new ModelAndView("redirect:/client/listclient");
         } else {
             ModelAndView mav = new ModelAndView("client/createclient");
-            mav.addObject("client", Client);
+            mav.addObject("client", client);
             mav.addObject("errors", errors);
             return mav;
         }
@@ -82,7 +85,7 @@ public class ClientController {
     @RequestMapping(value = "edit/{clientId}", method = RequestMethod.GET)
     public ModelAndView edit(@PathVariable Integer ClientId) {
         ModelAndView mav = new ModelAndView("client/editclient");
-        mav.addObject("client", ClientService.readEntity(ClientId));
+        mav.addObject("client", clientService.readEntity(ClientId));
         mav.addObject("errors", new ArrayList<String>());
         return mav;
     }
@@ -97,9 +100,9 @@ public class ClientController {
      */
     @RequestMapping(value = "edit", method = RequestMethod.POST)
     public ModelAndView edit(Client Client) {
-        List<String> errors = ClientService.validateEntity(Client);
+        List<String> errors = clientService.validateEntity(Client);
         if (errors.isEmpty()) {
-            ClientService.updateEntity(Client);
+            clientService.updateEntity(Client);
             return new ModelAndView("redirect:/client/listclient");
         } else {
             ModelAndView mav = new ModelAndView("client/editclient");
@@ -118,7 +121,7 @@ public class ClientController {
     @RequestMapping(value = "delete/{clientId}", method = RequestMethod.GET)
     public ModelAndView delete(@PathVariable Integer clientId) {
         ModelAndView mav = new ModelAndView("client/deleteclient");
-        mav.addObject("client", ClientService.readEntity(clientId));
+        mav.addObject("client", clientService.readEntity(clientId));
         return mav;
     }
 
@@ -132,7 +135,7 @@ public class ClientController {
     @RequestMapping(value = "delete", method = RequestMethod.POST)
     public String delete(@RequestParam String command, @RequestParam Integer clientId) {
         if (COMMAND_DELETE.equals(command)) {
-            ClientService.deleteEntity(clientId);
+            clientService.deleteEntity(clientId);
         }
         return "redirect:/client/listclient";
     }

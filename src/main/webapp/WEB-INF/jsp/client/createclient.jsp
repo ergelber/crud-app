@@ -44,7 +44,13 @@
             <label for="phone">Phone:</label>
             <input class="form-control" type="text" name="phone" value="${client.phone}"/>
             <br/>
-            <h3>NEED TO ADD CONTACTS</h3>
+            <h2>Associated Persons:</h2>
+            
+            <c:forEach items="${persons}" var="person">
+           		<div class="checkbox">
+                	<input type="checkbox" name="personIds" value="${person.personId}"/>${person.lastName}, ${person.firstName} 
+            	</div>
+            </c:forEach>
             <input class="btn btn-default" type="submit" name="Submit" value="Submit"/>
         </form>
     </body>
