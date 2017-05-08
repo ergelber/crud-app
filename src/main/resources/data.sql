@@ -44,7 +44,7 @@ INSERT INTO person (
 INSERT INTO client_persons ( 
 	person_id, 
 	client_id
-) VALUES ( 0, 0 ), ( 0, 1 ), ( 1, 1 ), ( 1, 0 )
+) VALUES ( 0, 0 ), ( 1, 1 )
 
 
 

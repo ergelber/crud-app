@@ -83,9 +83,10 @@ public class ClientController {
      * @return edit view populated from the Client record
      */
     @RequestMapping(value = "edit/{clientId}", method = RequestMethod.GET)
-    public ModelAndView edit(@PathVariable Integer ClientId) {
+    public ModelAndView edit(@PathVariable Integer clientId) {
         ModelAndView mav = new ModelAndView("client/editclient");
-        mav.addObject("client", clientService.readEntity(ClientId));
+        mav.addObject("client", clientService.readEntity(clientId));
+        mav.addObject("persons", personService.listEntities());
         mav.addObject("errors", new ArrayList<String>());
         return mav;
     }

@@ -9,10 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.transaction.annotation.Propagation;
@@ -27,15 +30,20 @@ import com.aquent.crudapp.domain.Person;
 public class PersonJdbcDao implements PersonDao {
 
     private static final String SQL_LIST_PEOPLE = "SELECT p.*, c.client_id as client_id, c.company as company FROM person p "
-									    		+ "INNER JOIN client_persons cp "
+									    		+ "LEFT JOIN client_persons cp "
 									    		+ "on p.person_id = cp.person_id "
-									    		+ "INNER JOIN client c "
+									    		+ "LEFT JOIN client c "
 									    		+ "on cp.client_id = c.client_id "
 									    		+ "ORDER BY p.last_name";
-    private static final String SQL_READ_PERSON = "SELECT * FROM person WHERE person_id = :personId";
+    private static final String SQL_READ_PERSON = "SELECT p.*, c.client_id as client_id, c.company as company FROM person p "
+									    		+ "LEFT JOIN client_persons cp "
+									    		+ "on p.person_id = cp.person_id "
+									    		+ "LEFT JOIN client c "
+									    		+ "on cp.client_id = c.client_id "
+									    		+ "WHERE p.person_id = :personId LIMIT 1";
     private static final String SQL_DELETE_PERSON = "DELETE FROM person WHERE person_id = :personId";
-    private static final String SQL_UPDATE_PERSON = "UPDATE person SET (first_name, last_name, email_address, street_address, city, state, zip_code, client_id)"
-												+ " = (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode, :client_id)"
+    private static final String SQL_UPDATE_PERSON = "UPDATE person SET (first_name, last_name, email_address, street_address, city, state, zip_code)"
+												+ " = (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode)"
 												+ " WHERE person_id = :personId";
     private static final String SQL_CREATE_PERSON = "INSERT INTO person (first_name, last_name, email_address, street_address, city, state, zip_code)"
                                                 + " VALUES (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode)";
@@ -75,6 +83,19 @@ public class PersonJdbcDao implements PersonDao {
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void updatePerson(Person person) {
+    	if(person.getClientIds() != null && person.getClientIds().size() > 0) {
+        	for(int i : person.getClientIds()) {
+        		MapSqlParameterSource params = new MapSqlParameterSource();
+        		params.addValue("client_id", i, Types.INTEGER);
+        		params.addValue("person_id", person.getPersonId(), Types.INTEGER);
+        		try {
+        			namedParameterJdbcTemplate.update(SQL_CREATE_CLIENT_PERSON, params);
+        		} catch (DuplicateKeyException e) {
+        			System.out.println("*** Person " + person.getPersonId() + " already has Client " + i + " associated ****");
+        		}
+        		
+        	}
+        }
         namedParameterJdbcTemplate.update(SQL_UPDATE_PERSON, new BeanPropertySqlParameterSource(person));
     }
 

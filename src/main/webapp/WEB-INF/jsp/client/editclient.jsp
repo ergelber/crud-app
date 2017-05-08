@@ -20,7 +20,7 @@
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     </head>
-    <body>
+    <body style="padding-left:5%">
         <h1>Edit Client</h1>
         <c:if test="${fn:length(errors) gt 0}">
             <p>Please correct the following errors in your submission:</p>
@@ -30,22 +30,29 @@
                 </c:forEach>
             </ul>
         </c:if>
-        <form action="${pageContext.request.contextPath}/client/edit" method="POST">
-            <input type="hidden" name="clientId" value="${client.clientId}"/>
+        <form style="width:30%" class="form-group" action="${pageContext.request.contextPath}/client/edit" method="POST">
+            <input class="form-control" type="hidden" name="clientId" value="${client.clientId}"/>
             <br/>
             <label for="company">Company:</label>
-            <input type="text" name="company" value="${client.company}"/>
+            <input class="form-control" type="text" name="company" value="${client.company}"/>
             <br/>
             <label for="website">Website:</label>
-            <input type="text" name="website" value="${client.website}"/>
+            <input class="form-control" type="text" name="website" value="${client.website}"/>
             <br/>
             <label for="mailing">Mailing Address:</label>
-            <input type="text" name="mailing" value="${client.mailing}"/>
+            <input class="form-control" type="text" name="mailing" value="${client.mailing}"/>
             <br/>
             <label for="phone">Phone:</label>
-            <input type="text" name="phone" value="${client.phone}"/>
+            <input class="form-control" type="text" name="phone" value="${client.phone}"/>
             <br/>
-            <input type="submit" name="Submit" value="Submit"/>
+            
+            <c:forEach items="${persons}" var="person">
+           		<div class="checkbox">
+                	<input type="checkbox" name="personIds" value="${person.personId}"/>${person.lastName}, ${person.firstName} 
+            	</div>
+            </c:forEach>
+            
+            <input class="btn ntw-default" type="submit" name="Submit" value="Submit"/>
         </form>
     </body>
 </html>

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -27,15 +28,15 @@ import com.aquent.crudapp.domain.Person;
 public class ClientJdbcDao implements ClientDao {
 
     private static final String SQL_LIST_CLIENTS = "SELECT DISTINCT c.*, p.person_id as person_id, p.first_name, p.last_name as name FROM client c "
-									    		+ "INNER JOIN client_persons cp "
+									    		+ "LEFT JOIN client_persons cp "
 									    		+ "on c.client_id = cp.client_id "
-									    		+ "INNER JOIN person p "
+									    		+ "LEFT JOIN person p "
 									    		+ "on cp.person_id = p.person_id "
 									    		+ "ORDER BY c.company";
-    private static final String SQL_READ_CLIENT = "SELECT c.*, p.first_name, p.last_name FROM client c "
-									    		+ "INNER JOIN client_persons cp "
+    private static final String SQL_READ_CLIENT = "SELECT c.*, p.first_name, p.person_id as person_id, p.last_name as name FROM client c "
+									    		+ "LEFT JOIN client_persons cp "
 									    		+ "on c.client_id = cp.client_id "
-									    		+ "INNER JOIN person p "
+									    		+ "LEFT JOIN person p "
 									    		+ "on cp.person_id = p.person_id " 
 									    		+ " WHERE client_id = :clientId";
     private static final String SQL_DELETE_CLIENT = "DELETE FROM client WHERE client_id = :clientId";
@@ -46,6 +47,7 @@ public class ClientJdbcDao implements ClientDao {
                                                   + " VALUES (:company, :website, :phone, :mailing)";
     private static final String SQL_CREATE_CLIENT_PERSON = "INSERT INTO client_persons (person_id, client_id)"
             									  + " VALUES (:person_id, :client_id)";
+    
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
@@ -74,6 +76,19 @@ public class ClientJdbcDao implements ClientDao {
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void updateClient(Client client) {
+    	if(client.getPersonIds() != null && client.getPersonIds().size() > 0) {
+        	for(int i : client.getPersonIds()) {
+        		MapSqlParameterSource params = new MapSqlParameterSource();
+        		params.addValue("client_id", client.getClientId(), Types.INTEGER);
+        		params.addValue("person_id", i, Types.INTEGER);
+        		try {
+        			namedParameterJdbcTemplate.update(SQL_CREATE_CLIENT_PERSON, params);
+        		} catch (DuplicateKeyException e) {
+        			System.out.println("*** Client " + client.getClientId() + " already has Person " + i + " associated ****");
+        		}
+        		
+        	}
+        }
         namedParameterJdbcTemplate.update(SQL_UPDATE_CLIENT, new BeanPropertySqlParameterSource(client));
     }
 
