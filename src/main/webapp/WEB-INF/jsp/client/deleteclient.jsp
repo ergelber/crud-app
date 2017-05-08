@@ -21,7 +21,7 @@
     <body>
         <h1>Delete Client</h1>
         <p>You are about to delete the person ${client.company}:  Are you sure?</p>
-        <form action="${pageContext.request.contextPath}/person/delete" method="post">
+        <form action="${pageContext.request.contextPath}/client/delete" method="post">
             <input type="hidden" name="clientId" value="${client.clientId}"/>
             <input type="submit" name="command" value="Cancel"/>
             <input type="submit" name="command" value="Delete"/>

@@ -33,7 +33,7 @@ INSERT INTO person (
     '28801'
 ), (
     'Jane',
-    'Smith',
+    'Doe',
     'fake2@aquent.com',
     '123 Any St.',
     'Asheville',

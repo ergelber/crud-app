@@ -100,14 +100,14 @@ public class ClientController {
      * @return redirect, or edit view with errors
      */
     @RequestMapping(value = "edit", method = RequestMethod.POST)
-    public ModelAndView edit(Client Client) {
-        List<String> errors = clientService.validateEntity(Client);
+    public ModelAndView edit(Client client) {
+        List<String> errors = clientService.validateEntity(client);
         if (errors.isEmpty()) {
-            clientService.updateEntity(Client);
+            clientService.updateEntity(client);
             return new ModelAndView("redirect:/client/listclient");
         } else {
             ModelAndView mav = new ModelAndView("client/editclient");
-            mav.addObject("client", Client);
+            mav.addObject("client", client);
             mav.addObject("errors", errors);
             return mav;
         }
@@ -134,11 +134,11 @@ public class ClientController {
      * @return redirect to the listing page
      */
     @RequestMapping(value = "delete", method = RequestMethod.POST)
-    public String delete(@RequestParam String command, @RequestParam Integer clientId) {
+    public ModelAndView delete(@RequestParam String command, @RequestParam Integer clientId) {
         if (COMMAND_DELETE.equals(command)) {
             clientService.deleteEntity(clientId);
         }
-        return "redirect:/client/listclient";
+        return new ModelAndView("redirect:/client/list");
     }
 }
 

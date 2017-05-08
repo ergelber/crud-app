@@ -138,6 +138,7 @@ public class PersonController {
     public String delete(@RequestParam String command, @RequestParam Integer personId) {
         if (COMMAND_DELETE.equals(command)) {
             personService.deleteEntity(personId);
+
         }
         return "redirect:/person/list";
     }

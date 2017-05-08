@@ -39,14 +39,15 @@ public class ClientJdbcDao implements ClientDao {
 									    		+ "LEFT JOIN person p "
 									    		+ "on cp.person_id = p.person_id " 
 									    		+ " WHERE client_id = :clientId";
+    private static final String SQL_DELETE_CLIENT_PERSON = "DELETE FROM client_persons WHERE client_id = :clientId";
     private static final String SQL_DELETE_CLIENT = "DELETE FROM client WHERE client_id = :clientId";
     private static final String SQL_UPDATE_CLIENT = "UPDATE client SET (company, website, phone, mailing)"
                                                   + " = (:company, :website, :phone, :mailing)"
                                                   + " WHERE client_id = :clientId";
     private static final String SQL_CREATE_CLIENT = "INSERT INTO client (company, website, phone, mailing)"
                                                   + " VALUES (:company, :website, :phone, :mailing)";
-    private static final String SQL_CREATE_CLIENT_PERSON = "INSERT INTO client_persons (person_id, client_id)"
-            									  + " VALUES (:person_id, :client_id)";
+    private static final String SQL_CREATE_CLIENT_PERSON = "INSERT INTO client_persons (client_id, person_id)"
+            									  + " VALUES (:client_id, :person_id)";
     
     
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -70,6 +71,7 @@ public class ClientJdbcDao implements ClientDao {
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void deleteClient(Integer clientId) {
+        namedParameterJdbcTemplate.update(SQL_DELETE_CLIENT_PERSON, Collections.singletonMap("clientId", clientId));
         namedParameterJdbcTemplate.update(SQL_DELETE_CLIENT, Collections.singletonMap("clientId", clientId));
     }
 

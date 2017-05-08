@@ -34,24 +34,28 @@
                             <th>Website</th>
                             <th>Phone</th>
                             <th>Mailing</th>
+                            <th>Person</th>
                             <th>Edit</th>
                             <th>Delete</th>
                         </tr>
                     </thead>
                     <tbody>
                         <c:forEach items="${clients}" var="client">
-                            <tr>
-                                <td>${client.company}</td>
-                                <td>${client.website}</td>
-                                <td>${client.phone}</td>
-                                <td>${client.mailing}</td>
-                                <td>
-                                    <a href="${pageContext.request.contextPath}/client/edit/${client.clientId}">Edit client</a>
-                                </td>
-                                <td>
-                                    <a href="${pageContext.request.contextPath}/client/delete/${client.clientId}">Delete client</a>
-                                </td>
-                            </tr>
+                        	<c:forEach items="${client.personNames}" var="name">
+	                            <tr>
+	                                <td>${client.company}</td>
+	                                <td>${client.website}</td>
+	                                <td>${client.phone}</td>
+	                                <td>${client.mailing}</td>
+	                                <td>${name}</td>
+	                                <td>
+	                                    <a href="${pageContext.request.contextPath}/client/edit/${client.clientId}">Edit client</a>
+	                                </td>
+	                                <td>
+	                                    <a href="${pageContext.request.contextPath}/client/delete/${client.clientId}">Delete client</a>
+	                                </td>
+	                            </tr>
+	                         </c:forEach>
                         </c:forEach>
                     </tbody>
                 </table>

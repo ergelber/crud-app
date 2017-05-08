@@ -41,6 +41,7 @@ public class PersonJdbcDao implements PersonDao {
 									    		+ "LEFT JOIN client c "
 									    		+ "on cp.client_id = c.client_id "
 									    		+ "WHERE p.person_id = :personId LIMIT 1";
+    private static final String SQL_DELETE_CLIENT_PERSON = "DELETE FROM client_persons WHERE person_id = :personId";
     private static final String SQL_DELETE_PERSON = "DELETE FROM person WHERE person_id = :personId";
     private static final String SQL_UPDATE_PERSON = "UPDATE person SET (first_name, last_name, email_address, street_address, city, state, zip_code)"
 												+ " = (:firstName, :lastName, :emailAddress, :streetAddress, :city, :state, :zipCode)"
@@ -77,6 +78,7 @@ public class PersonJdbcDao implements PersonDao {
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = false)
     public void deletePerson(Integer personId) {
+        namedParameterJdbcTemplate.update(SQL_DELETE_CLIENT_PERSON, Collections.singletonMap("personId", personId));
         namedParameterJdbcTemplate.update(SQL_DELETE_PERSON, Collections.singletonMap("personId", personId));
     }
 
@@ -93,7 +95,6 @@ public class PersonJdbcDao implements PersonDao {
         		} catch (DuplicateKeyException e) {
         			System.out.println("*** Person " + person.getPersonId() + " already has Client " + i + " associated ****");
         		}
-        		
         	}
         }
         namedParameterJdbcTemplate.update(SQL_UPDATE_PERSON, new BeanPropertySqlParameterSource(person));
